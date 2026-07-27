@@ -281,7 +281,7 @@ function loop() {
 resetGame();
 
 function movePlayer(x, y) {
-  const offsetY = ('ontouchstart' in window) ? 60 : 0;
+  const offsetY = ('ontouchstart' in window) ? 90 : 0;
 
   px = Math.max(0, Math.min(380, x - 10));
   py = Math.max(0, Math.min(380, y - 10 - offsetY));
