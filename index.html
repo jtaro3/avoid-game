@@ -33,12 +33,64 @@
 <body>
 
 <h1>AI追跡 避けゲー</h1>
-<p id="score">残り：30 秒 / スコア：1 / 最高：1 / 敵：0</p>
+<p id="score">残り：50 秒 / スコア：1 / 最高：1 / 敵：0</p>
 <button id="startBtn">開始</button>
+<button id="ruleBtn">ルール</button>
 <button id="retryBtn" style="display:none;">再プレイ</button>
+
 
 <div id="game">
   <div id="overlay" style="display:none;"></div>
+
+
+<div id="ruleWindow" style="
+display:none;
+position:absolute;
+top:20px;
+left:20px;
+right:20px;
+bottom:20px;
+background:white;
+border:3px solid black;
+padding:15px;
+overflow:auto;
+z-index:20;
+">
+
+<h2>ルール説明</h2>
+
+<p>
+🟩 緑アイテムを取ると<br>
+・スコア +3<br>
+・敵が1体増える
+</p>
+
+<p>
+🟪 紫アイテムを取ると<br>
+・スコア -5<br>
+・敵が3秒間遅くなる
+</p>
+
+<p>
+🔴 赤い敵に当たるとゲームオーバー
+</p>
+
+<p>
+⏰ 制限時間は50秒
+</p>
+
+<button id="closeRule">閉じる</button>
+
+</div>
+
+
+
+
+
+
+
+
+
   <div id="player" class="player"></div>
   <div id="item" class="item"></div>
   <div id="slow" class="slow"></div>
@@ -53,6 +105,20 @@ const scoreEl = document.getElementById("score");
 const overlay = document.getElementById("overlay");
 const startBtn = document.getElementById("startBtn");
 const retryBtn = document.getElementById("retryBtn");
+const ruleBtn = document.getElementById("ruleBtn");
+const ruleWindow = document.getElementById("ruleWindow");
+const closeRule = document.getElementById("closeRule");
+
+ruleBtn.onclick = () => {
+    ruleWindow.style.display = "block";
+};
+
+closeRule.onclick = () => {
+    ruleWindow.style.display = "none";
+};
+
+
+
 
 let alive = false;
 let started = false;
