@@ -109,6 +109,10 @@ game.addEventListener("mousemove", e => {
   );
 });
 
+player.x = touchX;
+player.y = touchY - 60;
+
+
 
 game.addEventListener("touchstart", e => {
   if (!alive) return;
