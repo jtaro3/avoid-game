@@ -3,87 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <title>AI追跡 避けゲー</title>
-<style>
-  body { text-align:center; font-family:sans-serif; }
-  #game {
-  
-  
-    width:400px;
-    height:400px;
-    border:3px solid #000;
-    margin:auto;
-    position:relative;
-    background:#f0f0f0;
-    touch-action:none;
- 
-  }
-  .player { width:20px; height:20px; background:black; position:absolute; }
-  .enemy  { background:red; position:absolute; border-radius:50%; }
-  .item   { width:16px; height:16px; background:limegreen; position:absolute; }
-  .slow   { width:16px; height:16px; background:purple; position:absolute; }
-  #overlay {
-    position:absolute; inset:0;
-    background:rgba(0,0,0,0.6);
-    color:#fff; font-size:48px;
-    display:flex; align-items:center; justify-content:center;
-    z-index:10;
-  }
-  
-  #startBtn {
-  background: #4CAF50;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-}
 
-#ruleBtn {
-  background: #2196F3;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-}
+<link rel="stylesheet" href="css/style.css">
 
-#retryBtn {
-  background: orange;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-}
-  
-  
-  
-  
-</style>
 </head>
 <body>
 
 <h1>AI追跡 避けゲー</h1>
-<p id="score">残り：50 秒 / スコア：1 / 最高：1 / 敵：0</p>
+
+<p id="score">
+残り：50 秒 / スコア：1 / 最高：1 / 敵：0
+</p>
+
 <button id="startBtn">開始</button>
 <button id="ruleBtn">ルール</button>
 <button id="retryBtn" style="display:none;">再プレイ</button>
 
-
 <div id="game">
-  <div id="overlay" style="display:none;"></div>
 
+<div id="overlay" style="display:none;"></div>
 
-<div id="ruleWindow" style="
-display:none;
-position:absolute;
-top:20px;
-left:20px;
-right:20px;
-bottom:20px;
-background:white;
-border:3px solid black;
-padding:15px;
-overflow:auto;
-z-index:20;
-">
+<div id="ruleWindow">
 
 <h2>ルール説明</h2>
 
@@ -111,284 +51,12 @@ z-index:20;
 
 </div>
 
+<div id="player" class="player"></div>
+<div id="item" class="item"></div>
+<div id="slow" class="slow"></div>
 
-
-
-
-
-
-
-
-  <div id="player" class="player"></div>
-  <div id="item" class="item"></div>
-  <div id="slow" class="slow"></div>
 </div>
 
-<script>
-const game = document.getElementById("game");
-const player = document.getElementById("player");
-const item = document.getElementById("item");
-const slowItem = document.getElementById("slow");
-const scoreEl = document.getElementById("score");
-const overlay = document.getElementById("overlay");
-const startBtn = document.getElementById("startBtn");
-const retryBtn = document.getElementById("retryBtn");
-const ruleBtn = document.getElementById("ruleBtn");
-const ruleWindow = document.getElementById("ruleWindow");
-const closeRule = document.getElementById("closeRule");
-
-ruleBtn.onclick = () => {
-    ruleWindow.style.display = "block";
-};
-
-closeRule.onclick = () => {
-    ruleWindow.style.display = "none";
-};
-
-
-
-
-let alive = false;
-let started = false;
-let startTime = 0;
-
-let score = 1;
-let maxScore = 1;
-
-let px = 190, py = 190;
-
-const enemies = [];
-const MAX_ENEMIES = 20;
-const MAX_FUSION = 5;
-let fusionCount = 0;
-
-let baseSpeed = 1.4;
-let speedRate = 1;
-let slowTimer = 0;
-let invincibleUntil = 0;
-
-const TIME_LIMIT = 50;
-
-function resetGame() {
-  enemies.forEach(e => game.removeChild(e.el));
-  enemies.length = 0;
-
-  score = 1;
-  fusionCount = 0;
-  alive = false;
-  started = false;
-  startTime = 0;
-  speedRate = 1;
-  slowTimer = 0;
-  invincibleUntil = 0;
-
-  px = 190; py = 190;
-  player.style.left = px + "px";
-  player.style.top  = py + "px";
-
-  placeItem(item);
-  placeItem(slowItem);
-
-  scoreEl.textContent = "残り：50 秒 / スコア：1 / 最高：" + maxScore + " / 敵：0";
-  retryBtn.style.display = "none";
-}
-
-game.addEventListener("mousemove", e => {
-  if (!alive) return;
-
-  const r = game.getBoundingClientRect();
-  movePlayer(
-    e.clientX - r.left,
-    e.clientY - r.top
-  );
-});
-
-
-
-game.addEventListener("touchstart", e => {
-  if (!alive) return;
-
-  e.preventDefault();
-
-  const r = game.getBoundingClientRect();
-  const t = e.touches[0];
-
-  movePlayer(
-    t.clientX - r.left,
-    t.clientY - r.top
-  );
-}, { passive:false });
-
-game.addEventListener("touchmove", e => {
-  if (!alive) return;
-
-  e.preventDefault();
-
-  const r = game.getBoundingClientRect();
-  const t = e.touches[0];
-
-  movePlayer(
-    t.clientX - r.left,
-    t.clientY - r.top
-  );
-}, { passive:false });
-
-
-
-
-
-
-
-
-startBtn.onclick = async () => {
-  if (started) return;
-  started = true;
-  overlay.style.display = "flex";
-  for (let i = 3; i > 0; i--) {
-    overlay.textContent = i;
-    await new Promise(r => setTimeout(r, 1000));
-  }
-  overlay.textContent = "START";
-  await new Promise(r => setTimeout(r, 500));
-  overlay.style.display = "none";
-  alive = true;
-  startTime = Date.now();
-  addEnemy(20);
-  loop();
-};
-
-retryBtn.onclick = resetGame;
-
-function addEnemy(size, x = Math.random()*360, y = Math.random()*360) {
-  if (enemies.length >= MAX_ENEMIES) return;
-  const el = document.createElement("div");
-  el.className = "enemy";
-  el.style.width = size + "px";
-  el.style.height = size + "px";
-  game.appendChild(el);
-  enemies.push({ el, x, y, size });
-}
-
-function placeItem(el) {
-  el.style.left = Math.random() * 360 + "px";
-  el.style.top  = Math.random() * 360 + "px";
-}
-
-function rectHit(a, b) {
-  return a.left < b.right && a.right > b.left &&
-         a.top  < b.bottom && a.bottom > b.top;
-}
-
-function checkFusion() {
-  let merged = true;
-  while (merged && fusionCount < MAX_FUSION) {
-    merged = false;
-    for (let i = 0; i < enemies.length; i++) {
-      for (let j = i + 1; j < enemies.length; j++) {
-        const a = enemies[i];
-        const b = enemies[j];
-        const d = Math.hypot(a.x - b.x, a.y - b.y);
-        if (d < (a.size + b.size) / 2) {
-          const nx = (a.x + b.x) / 2;
-          const ny = (a.y + b.y) / 2;
-          const newSize = a.size + b.size;
-          game.removeChild(a.el);
-          game.removeChild(b.el);
-          enemies.splice(j,1);
-          enemies.splice(i,1);
-          fusionCount++;
-          addEnemy(newSize, nx, ny);
-          merged = true;
-          break;
-        }
-      }
-      if (merged) break;
-    }
-  }
-}
-
-function gameOver(msg) {
-  alive = false;
-  if (score > maxScore) maxScore = score;
-  alert(msg + "\nスコア：" + score + "\n最高：" + maxScore);
-  retryBtn.style.display = "inline";
-}
-
-function loop() {
-  if (!alive) return;
-
-  const elapsed = (Date.now() - startTime) / 1000;
-  const remain = Math.max(0, Math.ceil(TIME_LIMIT - elapsed));
-  if (remain <= 0) {
-    gameOver("時間切れ！");
-    return;
-  }
-
-  if (slowTimer > 0) slowTimer--;
-  else speedRate = 1;
-
-  enemies.forEach(en => {
-    const dx = px - en.x;
-    const dy = py - en.y;
-    const d = Math.sqrt(dx*dx + dy*dy) || 1;
-    en.x += (dx/d) * baseSpeed * speedRate;
-    en.y += (dy/d) * baseSpeed * speedRate;
-    en.el.style.left = en.x + "px";
-    en.el.style.top  = en.y + "px";
-
-    if (Date.now() > invincibleUntil &&
-        rectHit(player.getBoundingClientRect(), en.el.getBoundingClientRect())) {
-      gameOver("捕まった！");
-    }
-  });
-
-  checkFusion();
-
-  if (rectHit(player.getBoundingClientRect(), item.getBoundingClientRect())) {
-    score += 3;
-    addEnemy(20);
-    invincibleUntil = Date.now() + 1000;
-    placeItem(item);
-  }
-
-  if (rectHit(player.getBoundingClientRect(), slowItem.getBoundingClientRect())) {
-    score -= 5;
-    speedRate = 0.5;
-    slowTimer = 180;
-    placeItem(slowItem);
-  }
-
-  if (score <= 0) {
-    gameOver("スコアが0になった！");
-    return;
-  }
-
-  scoreEl.textContent =
-    "残り：" + remain +
-    " 秒 / スコア：" + score +
-    " / 最高：" + maxScore +
-    " / 敵：" + enemies.length;
-
-  requestAnimationFrame(loop);
-}
-
-resetGame();
-
-function movePlayer(x, y) {
-  const offsetY = ('ontouchstart' in window) ? 90 : 0;
-
-  px = Math.max(0, Math.min(380, x - 10));
-  py = Math.max(0, Math.min(380, y - 10 - offsetY));
-
-  player.style.left = px + "px";
-  player.style.top = py + "px";
-}
-
-
-
-
-
-</script>
 
 </body>
 </html>
