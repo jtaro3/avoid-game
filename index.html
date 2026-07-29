@@ -234,32 +234,15 @@ game.addEventListener("touchmove", e => {
 }, { passive:false });
 
 
+
+
+
+
+
+
 startBtn.onclick = async () => {
   if (started) return;
-
-  ruleWindow.style.display = "none"; // ルール画面を閉じる
-
   started = true;
-  overlay.style.display = "flex";
-
-  for (let i = 3; i > 0; i--) {
-    overlay.textContent = i;
-    await new Promise(r => setTimeout(r, 1000));
-  }
-
-  overlay.textContent = "START";
-  await new Promise(r => setTimeout(r, 500));
-
-  overlay.style.display = "none";
-  alive = true;
-  startTime = Date.now();
-  addEnemy(20);
-  loop();
-};
-  
-  
-  
-  
   overlay.style.display = "flex";
   for (let i = 3; i > 0; i--) {
     overlay.textContent = i;
