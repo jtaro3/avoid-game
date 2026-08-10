@@ -131,8 +131,26 @@ startBtn.onclick = async () => {
 
 retryBtn.onclick = resetGame;
 
-function addEnemy(size, x = Math.random() * 360, y = Math.random() * 360) {
+function getEnemySpawnPoint(size) {
+  const max = 400 - size;
+  const corners = [
+    { x: 0, y: 0 },
+    { x: max, y: 0 },
+    { x: 0, y: max },
+    { x: max, y: max }
+  ];
+
+  return corners[Math.floor(Math.random() * corners.length)];
+}
+
+function addEnemy(size, x, y) {
   if (enemies.length >= MAX_ENEMIES) return;
+
+  if (x === undefined || y === undefined) {
+    const spawnPoint = getEnemySpawnPoint(size);
+    x = spawnPoint.x;
+    y = spawnPoint.y;
+  }
 
   const el = document.createElement("div");
   el.className = "enemy";
