@@ -36,7 +36,7 @@ let fusionCount = 0;
 
 let baseSpeed = 1.4;
 let speedRate = 1;
-let slowTimer = 0;
+let slowUntil = 0;
 let invincibleUntil = 0;
 
 const TIME_LIMIT = 50;
@@ -51,7 +51,7 @@ function resetGame() {
   started = false;
   startTime = 0;
   speedRate = 1;
-  slowTimer = 0;
+  slowUntil = 0;
   invincibleUntil = 0;
 
   px = 190;
@@ -228,11 +228,7 @@ function loop() {
     return;
   }
 
-  if (slowTimer > 0) {
-    slowTimer--;
-  } else {
-    speedRate = 1;
-  }
+speedRate = Date.now() < slowUntil ? 0.5 : 1;
 
   enemies.forEach(en => {
 
@@ -274,7 +270,7 @@ function loop() {
 
     speedRate = 0.5;
 
-    slowTimer = 180;
+    slowUntil = Date.now() + 3000;
 
     placeItem(slowItem);
   }
