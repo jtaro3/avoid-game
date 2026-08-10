@@ -7,21 +7,23 @@ const slowItem = document.getElementById("slow");
 const scoreEl = document.getElementById("score");
 const overlay = document.getElementById("overlay");
 const startBtn = document.getElementById("startBtn");
-const retryBtn = document.getElementById("retryBtn");
 const ruleBtn = document.getElementById("ruleBtn");
 const ruleWindow = document.getElementById("ruleWindow");
 const closeRule = document.getElementById("closeRule");
 
 ruleBtn.onclick = () => {
     ruleWindow.style.display = "block";
+    startBtn.disabled = true;
 };
 
 closeRule.onclick = () => {
     ruleWindow.style.display = "none";
+    startBtn.disabled = started;
 };
 
 let alive = false;
 let started = false;
+let gameFinished = false;
 let startTime = 0;
 
 let score = 1;
@@ -49,6 +51,7 @@ function resetGame() {
   fusionCount = 0;
   alive = false;
   started = false;
+  gameFinished = false;
   startTime = 0;
   speedRate = 1;
   slowUntil = 0;
@@ -63,7 +66,7 @@ function resetGame() {
   placeItem(slowItem);
 
   scoreEl.textContent = "残り：50 秒 / スコア：1 / 最高：" + maxScore + " / 敵：0";
-  retryBtn.style.display = "none";
+  startBtn.textContent = "開始";
 }
 
 game.addEventListener("mousemove", e => {
@@ -107,6 +110,10 @@ game.addEventListener("touchmove", e => {
 startBtn.onclick = async () => {
   if (started) return;
 
+  if (gameFinished) {
+    resetGame();
+  }
+
   ruleWindow.style.display = "none";
 
   started = true;
@@ -128,8 +135,6 @@ startBtn.onclick = async () => {
 
   loop();
 };
-
-retryBtn.onclick = resetGame;
 
 function getEnemySpawnPoint(size) {
   const max = 400 - size;
@@ -224,6 +229,8 @@ function checkFusion() {
 function gameOver(msg) {
 
   alive = false;
+  started = false;
+  gameFinished = true;
 
   if (score > maxScore) {
     maxScore = score;
@@ -231,7 +238,8 @@ function gameOver(msg) {
 
   alert(msg + "\nスコア：" + score + "\n最高：" + maxScore);
 
-  retryBtn.style.display = "inline";
+  startBtn.textContent = "再プレイ";
+  startBtn.disabled = false;
 }
 
 function loop() {
