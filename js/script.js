@@ -1,3 +1,5 @@
+alert("JavaScript読み込み成功");
+
 const game = document.getElementById("game");
 const player = document.getElementById("player");
 const item = document.getElementById("item");
