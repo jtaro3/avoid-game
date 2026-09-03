@@ -40,8 +40,8 @@ let slowUntil = 0;
 let invincibleUntil = 0;
 
 const TIME_LIMIT = 50;
-const TOUCH_OFFSET_X = 80;
-const TOUCH_OFFSET_Y = -104;
+const TOUCH_OFFSET_X = 104;
+const TOUCH_OFFSET_Y = -128;
 
 function resetGame() {
   enemies.forEach(e => game.removeChild(e.el));
