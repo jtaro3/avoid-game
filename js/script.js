@@ -167,7 +167,7 @@ function getEnemySpawnPoint(size) {
   return corners[Math.floor(Math.random() * corners.length)];
 }
 
-function addEnemy(size, x, y) {
+function addEnemy(size, x, y, isMerged = false) {
   if (enemies.length >= MAX_ENEMIES) return;
 
   if (x === undefined || y === undefined) {
@@ -187,8 +187,23 @@ function addEnemy(size, x, y) {
     el,
     x,
     y,
-    size
+    size,
+    isMerged
   });
+}
+
+function removeRandomUnmergedEnemy() {
+  if (enemies.length <= 1) return;
+
+  const candidates = enemies
+    .map((enemy, index) => ({ enemy, index }))
+    .filter(({ enemy }) => !enemy.isMerged);
+
+  if (candidates.length === 0) return;
+
+  const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+  game.removeChild(chosen.enemy.el);
+  enemies.splice(chosen.index, 1);
 }
 
 function placeItem(el, keepAway = false) {
@@ -240,7 +255,7 @@ function checkFusion() {
 
           fusionCount++;
 
-          addEnemy(newSize, nx, ny);
+          addEnemy(newSize, nx, ny, true);
 
           merged = true;
           break;
@@ -322,6 +337,7 @@ speedRate = Date.now() < slowUntil ? 0.5 : 1;
   if (rectHit(player.getBoundingClientRect(), slowItem.getBoundingClientRect())) {
 
     score = Math.max(0, score - 5);
+    removeRandomUnmergedEnemy();
 
     speedRate = 0.5;
 
