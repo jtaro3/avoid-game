@@ -178,6 +178,7 @@ function addEnemy(size, x, y, isMerged = false) {
 
   const el = document.createElement("div");
   el.className = "enemy";
+  el.dataset.merged = String(isMerged);
   el.style.width = size + "px";
   el.style.height = size + "px";
 
@@ -197,7 +198,7 @@ function removeRandomUnmergedEnemy() {
 
   const candidates = enemies
     .map((enemy, index) => ({ enemy, index }))
-    .filter(({ enemy }) => !enemy.isMerged);
+    .filter(({ enemy }) => enemy.el.dataset.merged !== "true");
 
   if (candidates.length === 0) return;
 
