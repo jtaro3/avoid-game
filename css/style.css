@@ -88,7 +88,13 @@ body{
     border:3px solid black;
     padding:15px;
     overflow:auto;
+    font-size:80%;
+    text-align:left;
     z-index:20;
+}
+
+#ruleWindow p{
+    margin:7px 0;
 }
 
 #startBtn{
