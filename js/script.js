@@ -40,8 +40,7 @@ let slowUntil = 0;
 let invincibleUntil = 0;
 
 const TIME_LIMIT = 50;
-const TOUCH_OFFSET_X = 104;
-const TOUCH_OFFSET_Y = -128;
+let lastTouch = null;
 
 function resetGame() {
   enemies.forEach(e => game.removeChild(e.el));
@@ -56,6 +55,7 @@ function resetGame() {
   speedRate = 1;
   slowUntil = 0;
   invincibleUntil = 0;
+  lastTouch = null;
 
   px = 190;
   py = 190;
@@ -87,13 +87,8 @@ game.addEventListener("touchstart", e => {
 
   e.preventDefault();
 
-  const r = game.getBoundingClientRect();
   const t = e.touches[0];
-
-  movePlayer(
-    t.clientX - r.left + TOUCH_OFFSET_X,
-    t.clientY - r.top + TOUCH_OFFSET_Y
-  );
+  lastTouch = { x: t.clientX, y: t.clientY };
 }, { passive: false });
 
 window.addEventListener("keydown", e => {
@@ -116,14 +111,21 @@ game.addEventListener("touchmove", e => {
 
   e.preventDefault();
 
-  const r = game.getBoundingClientRect();
   const t = e.touches[0];
+  if (!lastTouch) {
+    lastTouch = { x: t.clientX, y: t.clientY };
+    return;
+  }
 
-  movePlayer(
-    t.clientX - r.left + TOUCH_OFFSET_X,
-    t.clientY - r.top + TOUCH_OFFSET_Y
-  );
+  const dx = t.clientX - lastTouch.x;
+  const dy = t.clientY - lastTouch.y;
+  movePlayer(px + 10 + dx, py + 10 + dy);
+  lastTouch = { x: t.clientX, y: t.clientY };
 }, { passive: false });
+
+game.addEventListener("touchend", () => {
+  lastTouch = null;
+}, { passive: true });
 
 startBtn.onclick = async () => {
   if (started) return;
