@@ -23,6 +23,7 @@ let alive = false;
 let started = false;
 let gameFinished = false;
 let startTime = 0;
+let resultToken = 0;
 
 let score = 1;
 let maxScore = 1;
@@ -53,6 +54,7 @@ function resetGame() {
   alive = false;
   started = false;
   gameFinished = false;
+  resultToken++;
   startTime = 0;
   speedRate = 1;
   slowUntil = 0;
@@ -65,6 +67,7 @@ function resetGame() {
   player.style.top = py + "px";
 
   overlay.textContent = "";
+  overlay.classList.remove("result");
   overlay.style.display = "none";
   placeItem(item, true);
   placeItem(slowItem, true);
@@ -282,6 +285,8 @@ function gameOver(msg) {
 
   if (gameFinished) return;
 
+  const currentResultToken = ++resultToken;
+
   alive = false;
   started = false;
   gameFinished = true;
@@ -295,11 +300,22 @@ function gameOver(msg) {
     maxScore = finalScore;
   }
 
-  overlay.textContent = msg + "\n最終スコア：" + finalScore +
-    "\n（基本：" + basicScore + " × " + multiplier.toFixed(2) + "倍）" +
-    "\n最高：" + maxScore;
+  overlay.textContent = msg;
   overlay.style.whiteSpace = "pre-line";
+  overlay.classList.add("result");
+  overlay.classList.toggle("clear", msg === "クリア！");
   overlay.style.display = "flex";
+
+  setTimeout(() => {
+    if (currentResultToken !== resultToken || !gameFinished) return;
+
+    const detail = document.createElement("span");
+    detail.textContent = "最終スコア：" + finalScore +
+      "\n（基本：" + basicScore + " × " + multiplier.toFixed(2) + "倍）" +
+      "\n最高：" + maxScore;
+
+    overlay.replaceChildren(detail);
+  }, 1000);
 
   startBtn.textContent = "再プレイ";
   startBtn.classList.add("replay-mode");
@@ -314,7 +330,7 @@ function loop() {
   const remain = Math.max(0, Math.ceil(TIME_LIMIT - elapsed));
 
   if (remain <= 0) {
-    gameOver("時間切れ！");
+    gameOver("クリア！");
     return;
   }
 

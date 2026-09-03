@@ -99,6 +99,20 @@ body{
     border-radius:8px;
 }
 
+#overlay.result{
+    font-size:21px;
+    flex-direction:column;
+    gap:8px;
+}
+
+#overlay.result .result-title{
+    font-weight:bold;
+}
+
+#overlay.result.clear .result-title{
+    color:#ffeb3b;
+}
+
 #startBtn.replay-mode{
     background:#b7e33b;
     color:#1f3b08;
