@@ -67,6 +67,7 @@ function resetGame() {
 
   scoreEl.textContent = "残り：50 秒 / スコア：1 / 最高：" + maxScore + " / 敵：0";
   startBtn.textContent = "開始";
+  startBtn.classList.remove("replay-mode");
 }
 
 game.addEventListener("mousemove", e => {
@@ -264,6 +265,7 @@ function gameOver(msg) {
   overlay.style.display = "flex";
 
   startBtn.textContent = "再プレイ";
+  startBtn.classList.add("replay-mode");
   startBtn.disabled = false;
 }
 
@@ -317,18 +319,13 @@ speedRate = Date.now() < slowUntil ? 0.5 : 1;
 
   if (rectHit(player.getBoundingClientRect(), slowItem.getBoundingClientRect())) {
 
-    score -= 5;
+    score = Math.max(0, score - 5);
 
     speedRate = 0.5;
 
     slowUntil = Date.now() + 3000;
 
     placeItem(slowItem, true);
-  }
-
-  if (score <= 0) {
-    gameOver("スコアが0になった！");
-    return;
   }
 
   scoreEl.textContent =
