@@ -57,8 +57,8 @@ function resetGame() {
   invincibleUntil = 0;
   lastTouch = null;
 
-  px = 190;
-  py = 190;
+  px = (game.clientWidth - player.offsetWidth) / 2;
+  py = (game.clientHeight - player.offsetHeight) / 2;
   player.style.left = px + "px";
   player.style.top = py + "px";
 
@@ -158,7 +158,7 @@ startBtn.onclick = async () => {
 };
 
 function getEnemySpawnPoint(size) {
-  const max = 400 - size;
+  const max = game.clientWidth - size;
   const corners = [
     { x: 0, y: 0 },
     { x: max, y: 0 },
@@ -210,11 +210,12 @@ function removeRandomUnmergedEnemy() {
 }
 
 function placeItem(el, keepAway = false) {
+  const max = Math.max(0, game.clientWidth - el.offsetWidth);
   let x = 0;
   let y = 0;
   for (let tries = 0; tries < 30; tries++) {
-    x = Math.random() * 360;
-    y = Math.random() * 360;
+    x = Math.random() * max;
+    y = Math.random() * max;
     if (!keepAway || Math.hypot(x - px, y - py) > 80) break;
   }
   el.style.left = x + "px";
@@ -361,8 +362,10 @@ speedRate = Date.now() < slowUntil ? 0.5 : 1;
 resetGame();
 
 function movePlayer(x, y) {
-  px = Math.max(0, Math.min(380, x - 10));
-  py = Math.max(0, Math.min(380, y - 10));
+  const maxX = game.clientWidth - player.offsetWidth;
+  const maxY = game.clientHeight - player.offsetHeight;
+  px = Math.max(0, Math.min(maxX, x - player.offsetWidth / 2));
+  py = Math.max(0, Math.min(maxY, y - player.offsetHeight / 2));
 
   player.style.left = px + "px";
   player.style.top = py + "px";
