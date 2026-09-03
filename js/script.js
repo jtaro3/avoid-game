@@ -40,6 +40,8 @@ let slowUntil = 0;
 let invincibleUntil = 0;
 
 const TIME_LIMIT = 50;
+const TOUCH_OFFSET_X = 28;
+const TOUCH_OFFSET_Y = -40;
 
 function resetGame() {
   enemies.forEach(e => game.removeChild(e.el));
@@ -89,8 +91,8 @@ game.addEventListener("touchstart", e => {
   const t = e.touches[0];
 
   movePlayer(
-    t.clientX - r.left,
-    t.clientY - r.top
+    t.clientX - r.left + TOUCH_OFFSET_X,
+    t.clientY - r.top + TOUCH_OFFSET_Y
   );
 }, { passive: false });
 
@@ -118,8 +120,8 @@ game.addEventListener("touchmove", e => {
   const t = e.touches[0];
 
   movePlayer(
-    t.clientX - r.left,
-    t.clientY - r.top
+    t.clientX - r.left + TOUCH_OFFSET_X,
+    t.clientY - r.top + TOUCH_OFFSET_Y
   );
 }, { passive: false });
 
