@@ -11,7 +11,7 @@ body{
 }
 
 #game{
-    width:min(400px, calc(100vw - 24px));
+    width:min(380px, calc(100vw - 32px));
     aspect-ratio:1;
     height:auto;
     border:3px solid #000;

@@ -26,6 +26,7 @@ let startTime = 0;
 
 let score = 1;
 let maxScore = 1;
+let addedEnemyCount = 0;
 
 let px = 190, py = 190;
 
@@ -47,6 +48,7 @@ function resetGame() {
   enemies.length = 0;
 
   score = 1;
+  addedEnemyCount = 0;
   fusionCount = 0;
   alive = false;
   started = false;
@@ -67,7 +69,7 @@ function resetGame() {
   placeItem(item, true);
   placeItem(slowItem, true);
 
-  scoreEl.textContent = "残り：50 秒 / スコア：1 / 最高：" + maxScore + " / 敵：0";
+  scoreEl.textContent = "残り：50 秒 / スコア：1 / 最高：" + maxScore + " / 敵：0 / 増加敵：0";
   startBtn.textContent = "開始";
   startBtn.classList.remove("replay-mode");
 }
@@ -271,17 +273,31 @@ function checkFusion() {
   }
 }
 
+function getTimeMultiplier(remain) {
+  if (remain >= 45) return 1;
+  return 1 + ((44 - remain) * 0.5 / 44);
+}
+
 function gameOver(msg) {
+
+  if (gameFinished) return;
 
   alive = false;
   started = false;
   gameFinished = true;
 
-  if (score > maxScore) {
-    maxScore = score;
+  const remain = Math.max(0, Math.ceil(TIME_LIMIT - (Date.now() - startTime) / 1000));
+  const multiplier = getTimeMultiplier(remain);
+  const basicScore = score + addedEnemyCount;
+  const finalScore = Math.floor(basicScore * multiplier);
+
+  if (finalScore > maxScore) {
+    maxScore = finalScore;
   }
 
-  overlay.textContent = msg + "\nスコア：" + score + "\n最高：" + maxScore;
+  overlay.textContent = msg + "\n最終スコア：" + finalScore +
+    "\n（基本：" + basicScore + " × " + multiplier.toFixed(2) + "倍）" +
+    "\n最高：" + maxScore;
   overlay.style.whiteSpace = "pre-line";
   overlay.style.display = "flex";
 
@@ -331,7 +347,11 @@ speedRate = Date.now() < slowUntil ? 0.5 : 1;
 
     score += 3;
 
+    const enemyCountBefore = enemies.length;
     addEnemy(20);
+    if (enemies.length > enemyCountBefore) {
+      addedEnemyCount++;
+    }
 
     invincibleUntil = Date.now() + 1000;
 
@@ -354,7 +374,8 @@ speedRate = Date.now() < slowUntil ? 0.5 : 1;
     "残り：" + remain +
     " 秒 / スコア：" + score +
     " / 最高：" + maxScore +
-    " / 敵：" + enemies.length;
+    " / 敵：" + enemies.length +
+    " / 増加敵：" + addedEnemyCount;
 
   requestAnimationFrame(loop);
 }
