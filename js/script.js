@@ -6,6 +6,7 @@ const scoreEl = document.getElementById("score");
 const overlay = document.getElementById("overlay");
 const startBtn = document.getElementById("startBtn");
 const ruleBtn = document.getElementById("ruleBtn");
+const debugBtn = document.getElementById("debugBtn");
 const ruleWindow = document.getElementById("ruleWindow");
 const closeRule = document.getElementById("closeRule");
 
@@ -17,6 +18,13 @@ ruleBtn.onclick = () => {
 closeRule.onclick = () => {
     ruleWindow.style.display = "none";
     startBtn.disabled = started;
+};
+
+// デバッグ用：プレイ中の残り時間を強制的に0秒にする
+debugBtn.onclick = () => {
+  if (!alive) return;
+  startTime = Date.now() - TIME_LIMIT * 1000;
+  loop();
 };
 
 let alive = false;

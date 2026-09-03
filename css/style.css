@@ -140,6 +140,15 @@ body{
     border-radius:8px;
 }
 
+#debugBtn{
+    background:#f59e0b;
+    color:#451a03;
+    border:2px solid #b45309;
+    padding:6px 12px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
 #closeRule{
     display:block;
     width: min(120px, 60%);
