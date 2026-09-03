@@ -20,10 +20,10 @@ closeRule.onclick = () => {
     startBtn.disabled = started;
 };
 
-// デバッグ用：プレイ中の残り時間を強制的に0秒にする
+// デバッグ用：1回押すごとにプレイ中の残り時間を10秒減らす
 debugBtn.onclick = () => {
   if (!alive) return;
-  startTime = Date.now() - TIME_LIMIT * 1000;
+  startTime -= 10000;
   loop();
 };
 
@@ -286,7 +286,15 @@ function checkFusion() {
 
 function getTimeMultiplier(remain) {
   if (remain >= 45) return 1;
-  return 1 + ((44 - remain) * 0.5 / 44);
+  if (remain >= 40) return 1.1;
+  if (remain >= 35) return 1.15;
+  if (remain >= 30) return 1.2;
+  if (remain >= 25) return 1.25;
+  if (remain >= 20) return 1.3;
+  if (remain >= 15) return 1.35;
+  if (remain >= 10) return 1.4;
+  if (remain >= 5) return 1.45;
+  return 1.5;
 }
 
 function gameOver(msg) {
