@@ -117,8 +117,8 @@ game.addEventListener("touchmove", e => {
     return;
   }
 
-  const dx = t.clientX - lastTouch.x;
-  const dy = t.clientY - lastTouch.y;
+  const dx = (t.clientX - lastTouch.x) * 1.5;
+  const dy = (t.clientY - lastTouch.y) * 1.5;
   movePlayer(px + 10 + dx, py + 10 + dy);
   lastTouch = { x: t.clientX, y: t.clientY };
 }, { passive: false });
