@@ -34,7 +34,7 @@ const MAX_ENEMIES = 20;
 const MAX_FUSION = 5;
 let fusionCount = 0;
 
-let baseSpeed = 1.4;
+let baseSpeed = 0.85;
 let speedRate = 1;
 let slowUntil = 0;
 let invincibleUntil = 0;
@@ -60,8 +60,10 @@ function resetGame() {
   player.style.left = px + "px";
   player.style.top = py + "px";
 
-  placeItem(item);
-  placeItem(slowItem);
+  overlay.textContent = "";
+  overlay.style.display = "none";
+  placeItem(item, true);
+  placeItem(slowItem, true);
 
   scoreEl.textContent = "残り：50 秒 / スコア：1 / 最高：" + maxScore + " / 敵：0";
   startBtn.textContent = "開始";
@@ -90,6 +92,21 @@ game.addEventListener("touchstart", e => {
     t.clientY - r.top
   );
 }, { passive: false });
+
+window.addEventListener("keydown", e => {
+  if (!alive) return;
+  const step = 18;
+  const moves = {
+    ArrowUp: [0, -step], w: [0, -step], W: [0, -step],
+    ArrowDown: [0, step], s: [0, step], S: [0, step],
+    ArrowLeft: [-step, 0], a: [-step, 0], A: [-step, 0],
+    ArrowRight: [step, 0], d: [step, 0], D: [step, 0]
+  };
+  const move = moves[e.key];
+  if (!move) return;
+  e.preventDefault();
+  movePlayer(px + 10 + move[0], py + 10 + move[1]);
+});
 
 game.addEventListener("touchmove", e => {
   if (!alive) return;
@@ -128,6 +145,7 @@ startBtn.onclick = async () => {
   overlay.style.display = "none";
   alive = true;
   startTime = Date.now();
+  invincibleUntil = Date.now() + 2000;
 
   addEnemy(20);
 
@@ -170,9 +188,16 @@ function addEnemy(size, x, y) {
   });
 }
 
-function placeItem(el) {
-  el.style.left = Math.random() * 360 + "px";
-  el.style.top = Math.random() * 360 + "px";
+function placeItem(el, keepAway = false) {
+  let x = 0;
+  let y = 0;
+  for (let tries = 0; tries < 30; tries++) {
+    x = Math.random() * 360;
+    y = Math.random() * 360;
+    if (!keepAway || Math.hypot(x - px, y - py) > 80) break;
+  }
+  el.style.left = x + "px";
+  el.style.top = y + "px";
 }
 
 function rectHit(a, b) {
@@ -234,7 +259,9 @@ function gameOver(msg) {
     maxScore = score;
   }
 
-  alert(msg + "\nスコア：" + score + "\n最高：" + maxScore);
+  overlay.textContent = msg + "\nスコア：" + score + "\n最高：" + maxScore;
+  overlay.style.whiteSpace = "pre-line";
+  overlay.style.display = "flex";
 
   startBtn.textContent = "再プレイ";
   startBtn.disabled = false;
@@ -285,7 +312,7 @@ speedRate = Date.now() < slowUntil ? 0.5 : 1;
 
     invincibleUntil = Date.now() + 1000;
 
-    placeItem(item);
+    placeItem(item, true);
   }
 
   if (rectHit(player.getBoundingClientRect(), slowItem.getBoundingClientRect())) {
@@ -296,7 +323,7 @@ speedRate = Date.now() < slowUntil ? 0.5 : 1;
 
     slowUntil = Date.now() + 3000;
 
-    placeItem(slowItem);
+    placeItem(slowItem, true);
   }
 
   if (score <= 0) {
@@ -316,11 +343,8 @@ speedRate = Date.now() < slowUntil ? 0.5 : 1;
 resetGame();
 
 function movePlayer(x, y) {
-
-  const offsetY = ('ontouchstart' in window) ? 90 : 0;
-
   px = Math.max(0, Math.min(380, x - 10));
-  py = Math.max(0, Math.min(380, y - 10 - offsetY));
+  py = Math.max(0, Math.min(380, y - 10));
 
   player.style.left = px + "px";
   player.style.top = py + "px";

@@ -15,12 +15,14 @@
 残り：50 秒 / スコア：1 / 最高：1 / 敵：0
 </p>
 
+<p class="controls">マウス・タッチ・矢印キー（WASD）で移動</p>
+
 <button id="startBtn">開始</button>
 <button id="ruleBtn">ルール</button>
 
 <div id="game">
 
-<div id="overlay" style="display:none;"></div>
+<div id="overlay" style="display:none;" aria-live="polite"></div>
 
 <div id="ruleWindow">
 
@@ -55,6 +57,8 @@
 <div id="slow" class="slow"></div>
 
 </div>
+
+<div id="version">v1.1.0</div>
 
 <script src="js/script.js"></script>
 

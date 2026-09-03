@@ -1,6 +1,13 @@
 body{
     text-align:center;
     font-family:sans-serif;
+    color:#1f2937;
+}
+
+.controls{
+    margin:6px 0 12px;
+    color:#64748b;
+    font-size:14px;
 }
 
 #game{
@@ -9,19 +16,27 @@ body{
     border:3px solid #000;
     margin:auto;
     position:relative;
-    background:#f0f0f0;
+    background:linear-gradient(135deg,#f8fafc,#dbeafe);
     touch-action:none;
+    overflow:hidden;
+    cursor:crosshair;
 }
 
 .player{
     width:20px;
     height:20px;
     background:black;
+    border:3px solid white;
+    box-sizing:border-box;
+    border-radius:6px;
+    z-index:3;
     position:absolute;
 }
 
 .enemy{
-    background:red;
+    background:#ef4444;
+    border:2px solid #991b1b;
+    box-sizing:border-box;
     border-radius:50%;
     position:absolute;
 }
@@ -29,14 +44,20 @@ body{
 .item{
     width:16px;
     height:16px;
-    background:limegreen;
+    background:#22c55e;
+    border:2px solid #166534;
+    box-sizing:border-box;
+    border-radius:50%;
     position:absolute;
 }
 
 .slow{
     width:16px;
     height:16px;
-    background:purple;
+    background:#a855f7;
+    border:2px solid #581c87;
+    box-sizing:border-box;
+    border-radius:50%;
     position:absolute;
 }
 
@@ -45,7 +66,9 @@ body{
     inset:0;
     background:rgba(0,0,0,.6);
     color:white;
-    font-size:48px;
+    font-size:42px;
+    font-weight:bold;
+    text-shadow:0 2px 4px #000;
     display:flex;
     justify-content:center;
     align-items:center;
@@ -86,5 +109,20 @@ body{
     border:none;
     padding:8px 16px;
     border-radius:8px;
+}
+
+button{
+    font-size:16px;
+    margin:0 3px;
+    cursor:pointer;
+}
+
+#version{
+    position:fixed;
+    right:12px;
+    bottom:8px;
+    color:#64748b;
+    font-size:12px;
+    font-family:monospace;
 }
 
